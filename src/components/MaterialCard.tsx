@@ -43,19 +43,71 @@ export default function MaterialCard({ material, onUpdate }: MaterialCardProps) 
     if (!confirm('Are you sure you want to delete this material?')) {
       return;
     }
-
-    const { error } = await supabase
-      .from('materials')
-      .delete()
-      .eq('id', material.id);
-
-    if (error) {
-      toast.error('Error deleting material');
+    if (!material?.id) {
+      console.error('Missing material id, cannot delete', material);
+      toast.error('Cannot delete: missing material id');
       return;
     }
 
-    toast.success('Material deleted successfully');
-    onUpdate();
+    // Check for related quotes that reference this material
+    try {
+      const relatedResp = await supabase
+        .from('quotes')
+        .select('id', { count: 'exact' })
+        .eq('material_id', material.id);
+
+      console.log('Related quotes check response:', relatedResp);
+
+      // Normalize count: supabase-js may return count separately or undefined
+      // relatedResp = { data, error, count }
+      const anyRelated: any = relatedResp;
+      if (anyRelated.error) {
+        console.error('Error checking related quotes:', anyRelated.error);
+        toast.error('Error checking related quotes');
+        return;
+      }
+
+      const relatedCount = typeof anyRelated.count === 'number' ? anyRelated.count : (anyRelated.data?.length ?? 0);
+      if (relatedCount > 0) {
+        console.warn(`Blocked delete: ${relatedCount} quote(s) reference this material`);
+        toast.error(`No se puede eliminar: ${relatedCount} cotización(es) usan este material. Elimine o reasigne esas cotizaciones primero.`);
+        return;
+      }
+    } catch (err) {
+      console.error('Unhandled exception checking related quotes:', err);
+      toast.error('Error checking related quotes');
+      return;
+    }
+
+    // If no related quotes, proceed with delete
+    try {
+      const response = await supabase
+        .from('materials')
+        .delete()
+        .eq('id', material.id)
+        .select();
+
+      console.log('Supabase delete response:', response);
+
+      const anyResp: any = response;
+      if (anyResp.error) {
+        console.error('Error deleting material:', anyResp.error);
+        toast.error(`Error deleting material: ${anyResp.error.message || JSON.stringify(anyResp.error)}`);
+        return;
+      }
+
+      if (anyResp.status && anyResp.status >= 400) {
+        console.error('Delete returned status', anyResp.status, anyResp);
+        toast.error(`Delete failed: status ${anyResp.status}`);
+        return;
+      }
+
+      toast.success('Material deleted successfully');
+      onUpdate();
+    } catch (err) {
+      console.error('Unhandled exception deleting material:', err);
+      toast.error('Error deleting material');
+    }
   };
 
   if (isEditing) {
@@ -143,15 +195,17 @@ export default function MaterialCard({ material, onUpdate }: MaterialCardProps) 
           <div className="flex space-x-2">
             <button
               onClick={() => setIsEditing(true)}
-              className="p-1 rounded-full hover:bg-gray-100"
+              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+              title="Edit material"
             >
-              <PencilIcon className="h-5 w-5 text-gray-500" />
+              <PencilIcon className="h-5 w-5 text-blue-600" />
             </button>
             <button
               onClick={handleDelete}
-              className="p-1 rounded-full hover:bg-gray-100"
+              className="p-2 rounded-full hover:bg-red-50 transition-colors"
+              title="Delete material"
             >
-              <TrashIcon className="h-5 w-5 text-red-500" />
+              <TrashIcon className="h-5 w-5 text-red-600" />
             </button>
           </div>
         </div>

@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  // Remove floating nextjs logo
+  devIndicators: {
+    buildActivity: false
+  }
+}
 
 export default nextConfig;

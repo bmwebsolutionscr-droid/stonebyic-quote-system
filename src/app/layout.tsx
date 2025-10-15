@@ -33,7 +33,8 @@ export default function RootLayout({
             </div>
             <div style={{ display: 'flex', gap: 12 }}>
               <a href="/materials" style={{ color: 'var(--muted)', textDecoration: 'none' }}>Materials</a>
-              <a href="/quotes/new" style={{ color: 'var(--muted)', textDecoration: 'none' }}>New Quote</a>
+              <a href="/quotes" style={{ color: 'var(--muted)', textDecoration: 'none' }}>Quotes</a>
+              <a href="/quotes/new" style={{ color: 'var(--muted)', textDecoration: 'none' }}>New Quotes</a>
             </div>
           </div>
         </nav>
