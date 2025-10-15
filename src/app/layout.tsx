@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from 'next/link';
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
 
@@ -29,12 +30,12 @@ export default function RootLayout({
         <nav style={{ background: 'white', borderBottom: '1px solid #eef2f7' }}>
           <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <a href="/" style={{ fontWeight: 700, color: '#0f172a', textDecoration: 'none' }}>Stone Quotes</a>
+              <Link href="/" style={{ fontWeight: 700, color: '#0f172a', textDecoration: 'none' }}>Stone Quotes</Link>
             </div>
             <div style={{ display: 'flex', gap: 12 }}>
-              <a href="/materials" style={{ color: 'var(--muted)', textDecoration: 'none' }}>Materials</a>
-              <a href="/quotes" style={{ color: 'var(--muted)', textDecoration: 'none' }}>Quotes</a>
-              <a href="/quotes/new" style={{ color: 'var(--muted)', textDecoration: 'none' }}>New Quotes</a>
+              <Link href="/materials" style={{ color: 'var(--muted)', textDecoration: 'none' }}>Materials</Link>
+              <Link href="/quotes" style={{ color: 'var(--muted)', textDecoration: 'none' }}>Quotes</Link>
+              <Link href="/quotes/new" style={{ color: 'var(--muted)', textDecoration: 'none' }}>New Quotes</Link>
             </div>
           </div>
         </nav>

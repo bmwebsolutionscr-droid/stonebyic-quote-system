@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Material } from '@/types/supabase';
 import { supabase } from '@/lib/supabase-client';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 import toast from 'react-hot-toast';
 
 interface MaterialCardProps {
@@ -178,11 +179,13 @@ export default function MaterialCard({ material, onUpdate }: MaterialCardProps) 
   return (
     <div className="bg-white shadow rounded-lg overflow-hidden">
       {imageUrl && (
-        <div className="aspect-w-16 aspect-h-9">
-          <img
+        <div className="aspect-w-16 aspect-h-9 relative h-48">
+          <Image
             src={imageUrl}
             alt={name}
-            className="w-full h-48 object-cover"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
       )}
